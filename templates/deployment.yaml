@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}-deploy
+  namespace: {{ .Values.namespace }}
+  labels:
+    appdb: {{ .Values.appName }}
+    chart: {{ .Values.appName }}-{{ .Chart.Version }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      appdb: {{ .Values.appName }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        appdb: {{ .Values.appName }}
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: {{ .Values.volume.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.volume.claimName }}
+      containers:
+        - name: {{ .Values.appName }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          volumeMounts:
+            - name: {{ .Values.volume.name }}
+              mountPath: {{ .Values.volume.mountapi }}
+          ports:
+            - containerPort: {{ .Values.container.port }}
+              protocol: {{ .Values.container.protocol }}
+          resources:
+            limits:
+              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu }}
+            requests:
+              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu }}

@@ -1,0 +1,15 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ .Values.volume.volumeName }}
+  labels:
+    type: local
+spec:
+  storageClassName: {{ .Values.volume.storageClassName }}
+  accessModes:
+    - {{ .Values.volume.accessModes }}
+  capacity:
+    storage: {{ .Values.volume.storage }}
+  hostPath:
+    path: {{ .Values.volume.mountapi }}
+    type: {{ .Values.volume.hostPath }}
